@@ -1,5 +1,5 @@
-const {describe, it} = require('mocha')
-const {expect} = require('chai')
+const { describe, it } = require('mocha')
+const { expect } = require('chai')
 const cache = require('../src/cache')
 
 describe('await-cache', function () {
@@ -26,7 +26,7 @@ describe('await-cache', function () {
       return new Promise((resolve) => setTimeout(() => resolve([i, j, ++timesRunning]), 20))
     }, 1000)
     expect(await testFunc(1, 1)).to.deep.equal([1, 1, 1])
-    expect(await testFunc(1, {a: 1})).to.deep.equal([1, {a: 1}, 2])
+    expect(await testFunc(1, { a: 1 })).to.deep.equal([1, { a: 1 }, 2])
     expect(await testFunc(1337, ['x', 'y'])).to.deep.equal([1337, ['x', 'y'], 3])
     expect(await testFunc(1, 1)).to.deep.equal([1, 1, 1])
   })
