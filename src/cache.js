@@ -1,4 +1,4 @@
-const AwaitLock = require('await-lock')
+const AwaitLock = require('await-lock').default
 
 module.exports = function (callbackFunction, maxAgeInMSOrOptions = 0) {
   const defaultOptions = {
@@ -17,14 +17,14 @@ module.exports = function (callbackFunction, maxAgeInMSOrOptions = 0) {
   const givenOptions = typeof maxAgeInMSOrOptions === 'object' ? maxAgeInMSOrOptions : {
     maxAge: maxAgeInMSOrOptions - 0
   }
-  let options = Object.assign(defaultOptions, givenOptions)
-  let cache = {
+  const options = Object.assign(defaultOptions, givenOptions)
+  const cache = {
     timer: new Map(),
     lock: new Map(),
     data: new Map(),
     lru: []
   }
-  let cacheFunction = async function (...args) {
+  const cacheFunction = async function (...args) {
     const serializedArgs = options.serialize(args)
 
     if (!cache.lock.has(serializedArgs)) {
@@ -45,18 +45,16 @@ module.exports = function (callbackFunction, maxAgeInMSOrOptions = 0) {
         if (options.maxSize) {
           cache.lru.push(serializedArgs)
           while (cache.lru.length > options.maxSize) {
-            let toDeleteCacheEntry = cache.lru.shift()
+            const toDeleteCacheEntry = cache.lru.shift()
             cacheFunction.deleteSerialized(toDeleteCacheEntry)
           }
         }
-      } catch (e) {
-        throw e
       } finally {
         lock.release()
       }
     } else {
       if (options.maxSize) {
-        let pos = cache.lru.indexOf(serializedArgs)
+        const pos = cache.lru.indexOf(serializedArgs)
         if (pos >= 0) {
           cache.lru.splice(pos, 1)
         }
@@ -86,7 +84,7 @@ module.exports = function (callbackFunction, maxAgeInMSOrOptions = 0) {
     }
     cache.lock.delete(serializedArgs)
     cache.data.delete(serializedArgs)
-    let pos = cache.lru.indexOf(serializedArgs)
+    const pos = cache.lru.indexOf(serializedArgs)
     if (pos >= 0) {
       cache.lru.splice(pos, 1)
     }
